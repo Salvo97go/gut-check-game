@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Gut Check</title>
+<style>
+:root { --panel:#151722; --panel2:#10131d; --border:rgba(255,255,255,.12); --text:#f6f3ea; --muted:#a9a7b4; --gold:#f4c95d; --green:#35d07f; --yellow:#f4d35e; --orange:#ee964b; --red:#ef476f; }
+* { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body { margin:0; min-height:100vh; font-family:Arial,Helvetica,sans-serif; background:radial-gradient(circle at top,rgba(244,201,93,.18),transparent 32%),linear-gradient(180deg,#08090d,#10111a); color:var(--text); display:flex; justify-content:center; align-items:center; padding:18px; }
+.app { width:100%; max-width:480px; }
+.card { background:linear-gradient(180deg,var(--panel),#0e1018); border:1px solid var(--border); border-radius:28px; padding:24px; box-shadow:0 24px 70px rgba(0,0,0,.45); overflow:hidden; }
+.topbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:22px; }
+.brand { font-size:30px; font-weight:900; color:var(--gold); }
+.pill { border:1px solid var(--border); color:var(--muted); padding:8px 10px; border-radius:999px; font-size:12px; }
+h1 { font-size:34px; line-height:1.02; margin:0 0 12px; }
+h2 { font-size:22px; margin:0 0 12px; }
+p { color:var(--muted); line-height:1.45; margin:0 0 18px; }
+.question-box { background:var(--panel2); border:1px solid var(--border); border-radius:22px; padding:18px; margin:20px 0; }
+.choice { width:100%; border:1px solid var(--border); background:rgba(255,255,255,.055); color:var(--text); border-radius:18px; padding:18px; font-size:20px; font-weight:800; cursor:pointer; transition:.12s; }
+.choice.selected { border-color:var(--gold); background:rgba(244,201,93,.16); box-shadow:0 0 0 3px rgba(244,201,93,.08); }
+.choice:active,.btn:active { transform:scale(.97); }
+.vs { text-align:center; color:var(--gold); font-weight:900; letter-spacing:2px; margin:10px 0; }
+.slider-wrap { background:rgba(255,255,255,.045); border:1px solid var(--border); border-radius:20px; padding:18px; margin:18px 0; }
+.guess-number { font-size:46px; font-weight:900; color:var(--gold); text-align:center; margin:8px 0 14px; }
+input[type="range"] { width:100%; accent-color:var(--gold); }
+.range-labels { display:flex; justify-content:space-between; color:var(--muted); font-size:12px; margin-top:8px; }
+.btn { width:100%; border:none; border-radius:18px; padding:17px 18px; font-size:16px; font-weight:900; cursor:pointer; margin-top:10px; }
+.primary { background:var(--gold); color:#17120a; }
+.secondary { background:rgba(255,255,255,.08); color:var(--text); border:1px solid var(--border); }
+.btn:disabled { opacity:.4; }
+.hidden { display:none; }
+.result-badge { text-align:center; border-radius:22px; padding:18px; margin:18px 0; font-weight:900; font-size:26px; border:1px solid var(--border); }
+.dead{background:rgba(53,208,127,.18);color:var(--green)} .close{background:rgba(244,211,94,.18);color:var(--yellow)} .ok{background:rgba(238,150,75,.18);color:var(--orange)} .off{background:rgba(239,71,111,.18);color:var(--red)} .fail{background:rgba(53,55,70,.65);color:#d7d7df}
+.stats { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:16px 0; }
+.stat { background:rgba(255,255,255,.05); border:1px solid var(--border); border-radius:16px; padding:14px; text-align:center; }
+.stat strong { display:block; font-size:24px; color:var(--gold); }
+.stat span { font-size:12px; color:var(--muted); }
+.source { font-size:12px; color:var(--muted); border-top:1px solid var(--border); padding-top:12px; }
+.tiny { font-size:12px; color:var(--muted); text-align:center; margin-top:14px; }
+.toast { position:fixed; left:50%; bottom:22px; transform:translateX(-50%); background:#fff; color:#111; border-radius:999px; padding:10px 14px; font-weight:800; font-size:13px; opacity:0; transition:.2s; }
+.toast.show { opacity:1; }
+.shake { animation:shake .35s ease; }
+.reveal-pop { animation:pop .45s ease; }
+@keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 50%{transform:translateX(6px)} 75%{transform:translateX(-3px)} }
+@keyframes pop { 0%{transform:scale(.92);opacity:.5} 60%{transform:scale(1.04);opacity:1} 100%{transform:scale(1)} }
+</style>
+</head>
+<body>
+<div class="app">
+  <section class="card" id="card">
+    <div class="topbar"><div class="brand">GUT CHECK</div><div class="pill" id="puzzleNumber">Daily #001</div></div>
+    <div id="startScreen"><h1>Trust your gut. Then watch it get humbled.</h1><p>Pick the bigger side, guess how many times bigger, and see how close your instinct really is.</p><div class="question-box"><h2>Today’s Gut Check</h2><p id="homePrompt"></p></div><button class="btn primary" id="startBtn">PLAY TODAY’S GUT CHECK</button><p class="tiny">Your streak saves on this device.</p></div>
+    <div id="gameScreen" class="hidden"><h2 id="questionText"></h2><p>First, pick which answer is bigger.</p><button class="choice" id="leftChoice"></button><div class="vs">VS</div><button class="choice" id="rightChoice"></button><div class="slider-wrap"><p style="text-align:center;margin-bottom:4px;">How many times bigger?</p><div class="guess-number"><span id="guessDisplay">10</span>x</div><input type="range" id="ratioSlider" min="0" max="100" value="33" /><div class="range-labels"><span>1x</span><span>10x</span><span>100x</span><span>1000x</span></div></div><button class="btn primary" id="lockBtn" disabled>LOCK IN MY GUT CHECK</button></div>
+    <div id="resultScreen" class="hidden"><h2>Today’s Reveal</h2><p id="yourGuessText"></p><div class="result-badge" id="resultBadge"></div><div class="question-box"><h2 id="actualText"></h2><p id="explanationText"></p><div class="source" id="sourceText"></div></div><div class="stats"><div class="stat"><strong id="streakText">0</strong><span>Current Streak</span></div><div class="stat"><strong id="playedText">0</strong><span>Played</span></div></div><button class="btn primary" id="shareBtn">SHARE RESULT</button><button class="btn secondary" id="resetBtn">RESET TODAY</button><p class="tiny">Come back tomorrow for a new Gut Check.</p></div>
+  </section>
+</div>
+<div class="toast" id="toast">Copied result!</div>
+<script>
+const puzzles=[{id:1,question:"Which is heavier?",left:"A blue whale",right:"An African elephant",correctSide:"left",answerRatio:25,explanation:"A blue whale can weigh around 150 tons. A large African elephant is around 6 tons.",sourceName:"Approximate zoological reference values."},{id:2,question:"Which is taller?",left:"The Statue of Liberty",right:"The Eiffel Tower",correctSide:"right",answerRatio:3.2,explanation:"The Eiffel Tower is about 1,083 feet tall. The Statue of Liberty including pedestal is about 305 feet tall.",sourceName:"Approximate landmark heights."},{id:3,question:"Which has the larger population?",left:"California",right:"Illinois",correctSide:"left",answerRatio:3.1,explanation:"California has roughly three times the population of Illinois.",sourceName:"Approximate U.S. population estimates."},{id:4,question:"Which is faster?",left:"A cheetah",right:"Usain Bolt",correctSide:"left",answerRatio:3,explanation:"A cheetah can hit around 60–70 mph in bursts. Usain Bolt’s peak speed was roughly 27 mph.",sourceName:"Approximate peak speed references."},{id:5,question:"Which is longer?",left:"A football field",right:"A blue whale",correctSide:"left",answerRatio:3.3,explanation:"A football field is 300 feet long, while a blue whale is usually around 80–100 feet.",sourceName:"Approximate size references."}];
+const STORAGE_KEY="gutcheck_clean_v1";const todayStr=new Date().toISOString().slice(0,10);let audioCtx;let selectedSide=null;let guessRatio=10;
+function getPuzzle(){const start=new Date("2026-04-30T00:00:00");const now=new Date();const diff=Math.floor((now-start)/(1000*60*60*24));return puzzles[Math.abs(diff)%puzzles.length]}
+const puzzle=getPuzzle();
+const startScreen=document.getElementById("startScreen"),gameScreen=document.getElementById("gameScreen"),resultScreen=document.getElementById("resultScreen"),card=document.getElementById("card"),puzzleNumber=document.getElementById("puzzleNumber"),homePrompt=document.getElementById("homePrompt"),questionText=document.getElementById("questionText"),leftChoice=document.getElementById("leftChoice"),rightChoice=document.getElementById("rightChoice"),ratioSlider=document.getElementById("ratioSlider"),guessDisplay=document.getElementById("guessDisplay"),lockBtn=document.getElementById("lockBtn");
+puzzleNumber.textContent=`Daily #${String(puzzle.id).padStart(3,"0")}`;homePrompt.textContent=`${puzzle.question} ${puzzle.left} vs. ${puzzle.right}.`;questionText.textContent=puzzle.question;leftChoice.textContent=puzzle.left;rightChoice.textContent=puzzle.right;
+function unlockAudio(){if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)()}
+function tone(freq,duration,type="sine",volume=.08){if(!audioCtx)return;const osc=audioCtx.createOscillator();const gain=audioCtx.createGain();osc.type=type;osc.frequency.value=freq;gain.gain.value=volume;osc.connect(gain);gain.connect(audioCtx.destination);osc.start();gain.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+duration/1000);osc.stop(audioCtx.currentTime+duration/1000)}
+function clickSound(){unlockAudio();tone(520,70,"triangle",.09);setTimeout(()=>tone(760,55,"sine",.07),55)}
+function sliderSound(){unlockAudio();tone(220+Number(ratioSlider.value)*6,35,"square",.035)}
+function revealSound(result){unlockAudio();if(result.points>=4){[523,659,784,1046].forEach((n,i)=>setTimeout(()=>tone(n,150,"triangle",.1),i*110))}else if(result.points>=1){[350,430,520].forEach((n,i)=>setTimeout(()=>tone(n,120,"triangle",.08),i*110))}else{tone(180,180,"sawtooth",.09);setTimeout(()=>tone(120,220,"sawtooth",.07),160)}}
+function loadState(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{played:0,streak:0,lastPlayedDate:null,results:{}}}catch{return{played:0,streak:0,lastPlayedDate:null,results:{}}}}
+function saveState(state){localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}
+function sliderToRatio(value){const exponent=(Number(value)/100)*3;return Math.round(Math.pow(10,exponent)*10)/10}
+function setGuessFromSlider(){guessRatio=sliderToRatio(ratioSlider.value);guessDisplay.textContent=guessRatio}
+function selectSide(side){clickSound();selectedSide=side;leftChoice.classList.toggle("selected",side==="left");rightChoice.classList.toggle("selected",side==="right");lockBtn.disabled=false}
+function scoreGuess(side,guessedRatio,actualSide,actualRatio){if(side!==actualSide)return{label:"GUT CHECK FAILED",emoji:"⬛",className:"fail",points:0};const error=Math.abs(Math.log10(guessedRatio)-Math.log10(actualRatio));if(error<=.05)return{label:"DEAD ON",emoji:"🟩",className:"dead",points:5};if(error<=.15)return{label:"PRETTY CLOSE",emoji:"🟨",className:"close",points:4};if(error<=.30)return{label:"NOT BAD",emoji:"🟧",className:"ok",points:3};if(error<=.60)return{label:"WAY OFF",emoji:"🟥",className:"off",points:1};return{label:"GUT CHECK FAILED",emoji:"⬛",className:"fail",points:0}}
+function updateStreak(state){const yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);const yesterdayStr=yesterday.toISOString().slice(0,10);if(state.lastPlayedDate===todayStr)return state;state.streak=state.lastPlayedDate===yesterdayStr?state.streak+1:1;state.played+=1;state.lastPlayedDate=todayStr;return state}
+function reveal(){const result=scoreGuess(selectedSide,guessRatio,puzzle.correctSide,puzzle.answerRatio);let state=loadState();if(!state.results[todayStr])state=updateStreak(state);state.results[todayStr]={puzzleId:puzzle.id,selectedSide,guessRatio,result};saveState(state);renderResult(result,state)}
+function renderResult(result,state){const picked=selectedSide==="left"?puzzle.left:puzzle.right;const correct=puzzle.correctSide==="left"?puzzle.left:puzzle.right;const other=puzzle.correctSide==="left"?puzzle.right:puzzle.left;document.getElementById("yourGuessText").textContent=`Your gut said: ${picked} by ${guessRatio}x.`;const badge=document.getElementById("resultBadge");badge.textContent=`${result.emoji} ${result.label}`;badge.className=`result-badge ${result.className}`;document.getElementById("actualText").textContent=`${correct} is about ${puzzle.answerRatio}x bigger than ${other}.`;document.getElementById("explanationText").textContent=puzzle.explanation;document.getElementById("sourceText").textContent=`Source note: ${puzzle.sourceName}`;document.getElementById("streakText").textContent=state.streak;document.getElementById("playedText").textContent=state.played;startScreen.classList.add("hidden");gameScreen.classList.add("hidden");resultScreen.classList.remove("hidden");card.classList.add("reveal-pop");setTimeout(()=>card.classList.remove("reveal-pop"),500);revealSound(result)}
+function shareText(){const state=loadState();const saved=state.results[todayStr];const savedSide=saved?.selectedSide||selectedSide;const savedRatio=saved?.guessRatio||guessRatio;const result=saved?.result||scoreGuess(savedSide,savedRatio,puzzle.correctSide,puzzle.answerRatio);const picked=savedSide==="left"?puzzle.left:puzzle.right;const correct=puzzle.correctSide==="left"?puzzle.left:puzzle.right;return `Gut Check #${String(puzzle.id).padStart(3,"0")}\n${puzzle.left} vs ${puzzle.right}\n\nMy guess: ${picked} by ${savedRatio}x\nAnswer: ${correct} by ${puzzle.answerRatio}x\n\n${result.emoji} ${result.label}\nStreak: ${state.streak}\n\nTrust your gut. Then watch it get humbled.`}
+function showToast(message){const toast=document.getElementById("toast");toast.textContent=message;toast.classList.add("show");setTimeout(()=>toast.classList.remove("show"),1800)}
+document.getElementById("startBtn").addEventListener("click",()=>{clickSound();const state=loadState();const saved=state.results[todayStr];if(saved){selectedSide=saved.selectedSide;guessRatio=saved.guessRatio;renderResult(saved.result,state);return}startScreen.classList.add("hidden");gameScreen.classList.remove("hidden");card.classList.add("reveal-pop");setTimeout(()=>card.classList.remove("reveal-pop"),500)});
+leftChoice.addEventListener("click",()=>selectSide("left"));rightChoice.addEventListener("click",()=>selectSide("right"));
+ratioSlider.addEventListener("input",()=>{setGuessFromSlider();sliderSound()});
+lockBtn.addEventListener("click",()=>{clickSound();if(!selectedSide){card.classList.add("shake");setTimeout(()=>card.classList.remove("shake"),400);return}reveal()});
+document.getElementById("shareBtn").addEventListener("click",async()=>{clickSound();const text=shareText();if(navigator.share){try{await navigator.share({text});return}catch{}}try{await navigator.clipboard.writeText(text);showToast("Copied result!")}catch{showToast("Copy failed")}});
+document.getElementById("resetBtn").addEventListener("click",()=>{clickSound();const state=loadState();delete state.results[todayStr];state.played=Math.max(0,state.played-1);state.streak=Math.max(0,state.streak-1);if(state.lastPlayedDate===todayStr){state.lastPlayedDate=null}saveState(state);selectedSide=null;guessRatio=sliderToRatio(ratioSlider.value);leftChoice.classList.remove("selected");rightChoice.classList.remove("selected");lockBtn.disabled=true;resultScreen.classList.add("hidden");gameScreen.classList.add("hidden");startScreen.classList.remove("hidden");showToast("Today reset!")});
+setGuessFromSlider();
+</script>
+</body>
+</html>
