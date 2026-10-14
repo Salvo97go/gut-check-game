@@ -1,0 +1,10 @@
+{
+  "appId": "com.salvo97go.gutcheck",
+  "appName": "Gut Check",
+  "webDir": "www",
+  "backgroundColor": "#08090d",
+  "ios": {
+    "contentInset": "never",
+    "backgroundColor": "#08090d"
+  }
+}

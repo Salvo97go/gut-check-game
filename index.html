@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#08090d" />
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="icon" href="icon.png">
 <title>Gut Check</title>
@@ -12,7 +13,7 @@
 <style>
 :root{--panel:#151722;--panel2:#10131d;--border:rgba(255,255,255,.12);--text:#f6f3ea;--muted:#a9a7b4;--gold:#f4c95d;--green:#35d07f;--yellow:#f4d35e;--orange:#ee964b;--red:#ef476f}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;min-height:100vh;font-family:Arial,Helvetica,sans-serif;background:radial-gradient(circle at top,rgba(244,201,93,.18),transparent 32%),linear-gradient(180deg,#08090d,#10111a);color:var(--text);display:flex;justify-content:center;align-items:center;padding:18px}
+body{margin:0;min-height:100vh;font-family:Arial,Helvetica,sans-serif;background:radial-gradient(circle at top,rgba(244,201,93,.18),transparent 32%),linear-gradient(180deg,#08090d,#10111a);color:var(--text);display:flex;justify-content:center;align-items:center;padding:18px;padding:max(18px,env(safe-area-inset-top)) max(18px,env(safe-area-inset-right)) max(18px,env(safe-area-inset-bottom)) max(18px,env(safe-area-inset-left))}
 .app{width:100%;max-width:480px}.card{background:linear-gradient(180deg,var(--panel),#0e1018);border:1px solid var(--border);border-radius:28px;padding:24px;box-shadow:0 24px 70px rgba(0,0,0,.45);overflow:hidden}
 .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:10px}.brand{font-size:30px;font-weight:900;color:var(--gold);letter-spacing:-1px}.pill{border:1px solid var(--border);color:var(--muted);padding:8px 10px;border-radius:999px;font-size:12px;white-space:nowrap}
 .menu-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}.menu-btn,.small-btn{border:1px solid var(--border);background:rgba(255,255,255,.065);color:var(--text);border-radius:999px;padding:10px 12px;font-weight:900;cursor:pointer;font-size:13px}
@@ -24,7 +25,7 @@ h1{font-size:34px;line-height:1.02;margin:0 0 12px;letter-spacing:-1px}h2{font-s
 .result-badge{text-align:center;border-radius:22px;padding:18px;margin:18px 0;font-weight:900;font-size:26px;border:1px solid var(--border)}.dead{background:rgba(53,208,127,.18);color:var(--green)}.close{background:rgba(244,211,94,.18);color:var(--yellow)}.ok{background:rgba(238,150,75,.18);color:var(--orange)}.off{background:rgba(239,71,111,.18);color:var(--red)}.fail{background:rgba(53,55,70,.65);color:#d7d7df}
 .stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0}.stat{background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:16px;padding:14px;text-align:center}.stat strong{display:block;font-size:24px;color:var(--gold)}.stat span{font-size:12px;color:var(--muted)}.source{font-size:12px;color:var(--muted);border-top:1px solid var(--border);padding-top:12px}.tiny{font-size:12px;color:var(--muted);text-align:center;margin-top:14px}
 .footer-links{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:18px;padding-top:14px;border-top:1px solid var(--border)}.footer-links a{color:var(--muted);font-size:12px;text-decoration:underline;cursor:pointer}.leaderboard-list{margin:0;padding-left:20px;color:var(--text)}.leaderboard-list li{margin:8px 0}.rank-note{font-size:13px;color:var(--muted);margin-top:10px}
-.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#fff;color:#111;border-radius:999px;padding:10px 14px;font-weight:800;font-size:13px;opacity:0;transition:.2s;z-index:50}.toast.show{opacity:1}.shake{animation:shake .35s ease}.reveal-pop{animation:pop .45s ease}@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}50%{transform:translateX(6px)}75%{transform:translateX(-3px)}}@keyframes pop{0%{transform:scale(.92);opacity:.5}60%{transform:scale(1.04);opacity:1}100%{transform:scale(1)}}
+.toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom));transform:translateX(-50%);background:#fff;color:#111;border-radius:999px;padding:10px 14px;font-weight:800;font-size:13px;opacity:0;transition:.2s;z-index:50}.toast.show{opacity:1}.shake{animation:shake .35s ease}.reveal-pop{animation:pop .45s ease}@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}50%{transform:translateX(6px)}75%{transform:translateX(-3px)}}@keyframes pop{0%{transform:scale(.92);opacity:.5}60%{transform:scale(1.04);opacity:1}100%{transform:scale(1)}}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;padding:18px;z-index:40}.modal.show{display:flex}.modal-box{width:100%;max-width:470px;max-height:82vh;overflow:auto;background:#11131d;border:1px solid var(--border);border-radius:24px;padding:22px;box-shadow:0 24px 70px rgba(0,0,0,.6)}.modal-box h2{color:var(--gold)}.modal-box li{color:var(--muted);line-height:1.45;margin-bottom:10px}
 </style>
 </head>
@@ -150,11 +151,13 @@ document.getElementById("tomorrowModalText").textContent=`${tomorrowPuzzle.quest
 
 function openModal(id){document.getElementById(id).classList.add("show");}
 function closeModal(id){document.getElementById(id).classList.remove("show");}
+const isNativeApp=Boolean(window.Capacitor?.isNativePlatform?.()),nativePlugins=window.Capacitor?.Plugins||{};
+function haptic(style="LIGHT"){if(isNativeApp)nativePlugins.Haptics?.impact({style}).catch(()=>{});}
 function unlockAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext);}
 function tone(freq,duration,type="sine",volume=.08){if(!audioCtx)return;const osc=audioCtx.createOscillator(),gain=audioCtx.createGain();osc.type=type;osc.frequency.value=freq;gain.gain.value=volume;osc.connect(gain);gain.connect(audioCtx.destination);osc.start();gain.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+duration/1000);osc.stop(audioCtx.currentTime+duration/1000);}
-function clickSound(){unlockAudio();tone(520,70,"triangle",.09);setTimeout(()=>tone(760,55,"sine",.07),55);}
+function clickSound(){haptic();unlockAudio();tone(520,70,"triangle",.09);setTimeout(()=>tone(760,55,"sine",.07),55);}
 function sliderSound(){unlockAudio();tone(220+Number(ratioSlider.value)*6,35,"square",.035);}
-function revealSound(result){unlockAudio();if(result.points>=4){[523,659,784,1046].forEach((n,i)=>setTimeout(()=>tone(n,150,"triangle",.1),i*110));}else if(result.points>=1){[350,430,520].forEach((n,i)=>setTimeout(()=>tone(n,120,"triangle",.08),i*110));}else{tone(180,180,"sawtooth",.09);setTimeout(()=>tone(120,220,"sawtooth",.07),160);}}
+function revealSound(result){haptic(result.points>=4?"HEAVY":"MEDIUM");unlockAudio();if(result.points>=4){[523,659,784,1046].forEach((n,i)=>setTimeout(()=>tone(n,150,"triangle",.1),i*110));}else if(result.points>=1){[350,430,520].forEach((n,i)=>setTimeout(()=>tone(n,120,"triangle",.08),i*110));}else{tone(180,180,"sawtooth",.09);setTimeout(()=>tone(120,220,"sawtooth",.07),160);}}
 function loadState(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{played:0,streak:0,lastPlayedDate:null,results:{}};}catch{return{played:0,streak:0,lastPlayedDate:null,results:{}};}}
 function saveState(state){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}
 function sliderToRatio(value){return Math.round(Math.pow(10,(Number(value)/100)*3)*10)/10;}
@@ -183,9 +186,10 @@ document.getElementById("startBtn").addEventListener("click",()=>{clickSound();c
 leftChoice.addEventListener("click",()=>selectSide("left"));rightChoice.addEventListener("click",()=>selectSide("right"));
 ratioSlider.addEventListener("input",()=>{setGuessFromSlider();sliderSound();});
 lockBtn.addEventListener("click",()=>{clickSound();if(!selectedSide){card.classList.add("shake");setTimeout(()=>card.classList.remove("shake"),400);return;}reveal();});
-document.getElementById("shareBtn").addEventListener("click",async()=>{clickSound();const text=shareText();if(navigator.share){try{await navigator.share({text});return;}catch{}}try{await navigator.clipboard.writeText(text);showToast("Copied result!");}catch{showToast("Copy failed");alert(text);}});
+document.getElementById("shareBtn").addEventListener("click",async()=>{clickSound();const text=shareText();if(isNativeApp&&nativePlugins.Share){try{await nativePlugins.Share.share({text});return;}catch{}}if(navigator.share){try{await navigator.share({text});return;}catch{}}try{await navigator.clipboard.writeText(text);showToast("Copied result!");}catch{showToast("Copy failed");alert(text);}});
 document.getElementById("resetBtn").addEventListener("click",()=>{clickSound();const state=loadState(),hadResult=Boolean(state.results[todayStr]);delete state.results[todayStr];if(hadResult){state.played=Math.max(0,state.played-1);state.streak=Math.max(0,state.streak-1);}if(state.lastPlayedDate===todayStr)state.lastPlayedDate=null;saveState(state);selectedSide=null;ratioSlider.value=33;setGuessFromSlider();leftChoice.classList.remove("selected");rightChoice.classList.remove("selected");lockBtn.disabled=true;resultScreen.classList.add("hidden");gameScreen.classList.add("hidden");startScreen.classList.remove("hidden");showToast("Today reset!");});
 document.querySelectorAll(".modal").forEach(modal=>modal.addEventListener("click",e=>{if(e.target===modal)modal.classList.remove("show");}));
+if(isNativeApp){document.querySelector(".auth-box").classList.add("hidden");}
 setGuessFromSlider();loadLeaderboard();
 </script>
 </body>
